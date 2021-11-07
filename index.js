@@ -114,5 +114,5 @@ app.get('/api/persons', (req, res) => {
   })
 
 app.listen(PORT, () => {
-    console.log('Server is running on http://localhost:3001')
+    console.log(`Server is running on ${PORT}`)
 })
