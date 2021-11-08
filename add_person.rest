@@ -1,0 +1,7 @@
+POST http://localhost:3001
+content-type: application/json
+
+{
+    "name": "sample",
+    "number": "715 491 8994"
+}
