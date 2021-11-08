@@ -89,7 +89,7 @@ app.get('/api/persons', (req, res) => {
   }
 
 
-  app.post('api/persons', (req, res) => { 
+  app.post('/api/persons', (req, res) => { 
     const {body} = req.body
     console.log(body)
     if (!body.name || !body.number){
