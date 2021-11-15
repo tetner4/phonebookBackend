@@ -2,15 +2,11 @@ const { json } = require('express');
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
-const PORT = process.env.PORT || 3001; 
 app.use(express.json());
-
 app.use(express.static('build'))
-
+const Person = require('./models/person')
 const cors = require('cors')
 app.use(cors())
-
-
 
 morgan.token('body', (req, res) => JSON.stringify(req.body));
 
@@ -42,7 +38,12 @@ let persons = [
 
 app.get('/api/info', (req, res) => {
   const utcDate1 = new Date(Date.now());
-  res.send(`<p> Phonebook has info for ${persons.length} people </p> <p> ${utcDate1.toUTCString()}</p>`)
+  utcDate1 = utcDate1.toString()
+  Person.find({}).then(result => {
+    res.send(
+      `<p> Phonebook has info for ${result.length} people </p> ${utcDate1}`)
+  })
+
 })
 
 app.get('/', (request, response) => {
@@ -53,31 +54,23 @@ app.get('/', (request, response) => {
  
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person.find({}).then(person => {
+    res.json(person)
+  })
 })
 
 
   app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person){
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
-    
+    Person.findById(request.params.id).then(person => {
+      response.json(person)
+    }) 
   })
 
   app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person){
+    Person.findById(request.params.id).then(person => {
       response.json(person)
-    } else {
-      response.status(404).end()
-    }
+    })
+    
   })
 
   const generateID = () => {
@@ -92,31 +85,26 @@ app.get('/api/persons', (req, res) => {
   app.post('/api/persons', (req, res) => { 
     const {body} = req.body
     console.log(body)
-    if (!body.name || !body.number){
+    if (body.content === undefined){
       return res.status(400).json({
         error: 'content missing'
       })
         
-    }
+    } 
+    else {
 
-    /*if(persons.filter(person => {person.name === body.name})){
-      return res.status(400).json({
-        error: 'name already exists'
-      })
-    */
-
-    const person = {
+    const person = new Person ({
       name: body.name,
       number: body.number,
       id: generateID()
-    }
+    })
 
-    persons = persons.concat(person)
-    console.log(person)
-    res.json(person)
+    person.save().then(savedPerson => {
+      response.json(savedPerson)
+    })
 
-  })
-
+  }})
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`)
 })
