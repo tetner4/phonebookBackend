@@ -1,6 +1,8 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
 const url = process.env.MONGODB_URI
+const uniqueValidator = require('mongoose-unique-validator')
+personSchema.plugin(uniqueValidator)
 
 console.log('connecting to', url)
 
@@ -13,8 +15,8 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-  name: {type: String},
-  number: {type: String}
+  name: {type: String, required: true, unique: true},
+  number: {type: String, required: true, unique: true}
   
 })
 
