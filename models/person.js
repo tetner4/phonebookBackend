@@ -1,9 +1,8 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
-const dotenv=require("dotenv")
-dotenv.config()
-
 const url = process.env.MONGODB_URI
-console.log('connecting to URL')
+
+console.log('connecting to', url)
 
 mongoose.connect(url)
   .then(result => {
@@ -14,17 +13,18 @@ mongoose.connect(url)
   })
 
 const personSchema = new mongoose.Schema({
-  number: {type: String, minlength: 8, requierd: true, unique: true},
-  name: {type: String, minlength: 1, required: true, unique: true}
+  name: {type: String},
+  number: {type: String}
   
 })
 
-personSchema.set('toJSON', { 
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
   }
 })
-const Person = new mongoose.model('Person', personSchema)
-module.exports = Person
+module.exports = mongoose.model('Person', personSchema)
+
+

@@ -1,1 +1,7 @@
 POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Greg Tetner",
+    "number": "715 491 8949"
+}
